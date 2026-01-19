@@ -24,7 +24,7 @@ export default function InnerPage() {
 
         <h1 className=' text-5xl  md:text-8xl font-semibold tracking-tight text-gray-800 dark:text-white max-w-5xl'>
           Turning imagination into
-          <div className='flex justify-center gap-6'>
+          <div className='flex justify-center gap-5'>
 
             <p className='text-blue-500 my-2'>digital </p>
             <p className='text-gray-800 dark:text-white my-2 '>impact.</p>
@@ -37,6 +37,7 @@ export default function InnerPage() {
           into interactive digital experiences.
         </p>
         <img className='w-[75%] my-12' src={assets.hero_img} alt="" />
+        <img src={assets.bgimage1} alt="" className=' absolute' />
 
         {/* Trusted Partners */}
         <p className='text-gray-700 mt-14 font-semibold  dark:text-gray-500 text-sm  '>

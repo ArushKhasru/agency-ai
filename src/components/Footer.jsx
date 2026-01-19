@@ -1,12 +1,42 @@
 import { useState } from 'react';
 import assets from '../assets/assets';
+import emailjs from '@emailjs/browser';
+import toast from 'react-hot-toast'
+
+const SERVICE_ID = import.meta.env.VITE_SERVICE_ID;
+const PUBLIC_KEY = import.meta.env.VITE_PUBLIC_KEY;
+const SUBSCRIBE_TEMPLATE = import.meta.env.VITE_SUBSCRIBE_TEMPLATE;
 
 export default function Footer() {
   const [email, setEmail] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleSubscribe = (e) => {
+  const handleSubscribe = async (e) => {
     e.preventDefault();
-    console.log('Subscribed with email:', email);
+
+    if (!email) {
+      toast.error('Email is required');
+      return;
+    }
+
+   setLoading(true);
+
+    try {
+      await emailjs.send(
+        SERVICE_ID,
+        SUBSCRIBE_TEMPLATE,
+        { email: email },
+        PUBLIC_KEY
+      );
+
+      toast.success('Subscribed successfully');
+      setEmail('');
+    } catch (err) {
+      console.error(err);
+      toast.error('Subscription failed');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -70,15 +100,26 @@ export default function Footer() {
               />
               <button
                 type="submit"
+                disabled={loading}
                 className="
-                  px-8 py-3 rounded-ios font-medium
-                  bg-iosBlue hover:bg-iosBlueDark
-                  text-white shadow-ios dark:shadow-iosDark
-                  transition
-                "
+    relative overflow-hidden
+    px-8 py-3 rounded-ios font-medium text-white
+    bg-iosBlue hover:bg-iosBlueDark
+    transition-all duration-300
+    active:scale-95
+    disabled:opacity-60 disabled:cursor-not-allowed
+  "
               >
-                Subscribe
+                {loading ? (
+                  <span className="flex justify-center items-center gap-2">
+                    <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
+                    Subscribing...
+                  </span>
+                ) : (
+                  'Subscribe'
+                )}
               </button>
+
             </form>
           </div>
         </div>

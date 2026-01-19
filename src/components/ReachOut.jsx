@@ -1,6 +1,13 @@
 import { useState } from 'react';
+import toast from 'react-hot-toast';
 import assets from '../assets/assets';
 import { FaArrowRightLong } from "react-icons/fa6";
+import emailjs from '@emailjs/browser';
+
+
+const SERVICE_ID = import.meta.env.VITE_SERVICE_ID;
+const TEMPLATE_ID = import.meta.env.VITE_TEMPLATE_ID;
+const PUBLIC_KEY = import.meta.env.VITE_PUBLIC_KEY;
 
 export default function ContactForm() {
   const [formData, setFormData] = useState({
@@ -9,18 +16,53 @@ export default function ContactForm() {
     message: ''
   });
 
+  const [loading, setLoading] = useState(false);
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Form submitted:', formData);
+
+    if (!formData.name || !formData.email || !formData.message) {
+      toast.error('Please fill all fields');
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      await emailjs.send(
+        SERVICE_ID,
+        TEMPLATE_ID,
+        {
+          name: formData.name,
+          email: formData.email,
+          message: formData.message,
+        },
+        PUBLIC_KEY
+      );
+
+      toast.success('Message sent successfully');
+
+      setFormData({
+        name: '',
+        email: '',
+        message: ''
+      });
+
+    } catch (error) {
+      console.error('EmailJS Error:', error);
+      toast.error('Failed to send message ');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <section id="contact" className="py-32 px-6 flex justify-center">
-      
+
       <div className="
         max-w-4xl w-full
         p-12
@@ -44,10 +86,10 @@ export default function ContactForm() {
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-8">
-          
+
           {/* 2 Column row */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            
+
             {/* Name */}
             <div className="space-y-2">
               <label htmlFor="name" className="text-sm font-medium text-gray-800 dark:text-gray-200">
@@ -136,16 +178,31 @@ export default function ContactForm() {
           {/* Submit */}
           <button
             type="submit"
-            className="
-              px-8 py-3 flex items-center gap-2 justify-center
-              rounded-full font-medium text-white
-              bg-iosBlue hover:bg-iosBlueDark
-              shadow-[0_2px_6px_rgba(0,0,0,0.1)]
-              transition-all active:scale-[.97]
-            "
+            disabled={loading}
+            className={`
+    relative overflow-hidden
+    px-8 py-3 flex items-center gap-3 justify-center
+    rounded-full font-medium text-white
+    bg-iosBlue hover:bg-iosBlueDark
+    shadow-[0_2px_6px_rgba(0,0,0,0.15)]
+    transition-all duration-300
+    active:scale-95
+    disabled:opacity-70 disabled:cursor-not-allowed
+  `}
           >
-            Submit <FaArrowRightLong />
+            {loading ? (
+              <>
+                {/* Spinner */}
+                <span className="w-5 h-5 border-2 border-white/40 border-t-white rounded-full animate-spin" />
+                Sending...
+              </>
+            ) : (
+              <>
+                Submit <FaArrowRightLong className="transition-transform group-hover:translate-x-1" />
+              </>
+            )}
           </button>
+
 
         </form>
       </div>
