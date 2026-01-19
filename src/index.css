@@ -4,51 +4,99 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Remove weird custom variant */
-*:focus {
-  outline: none;
-}
-
-body {
+/* Global Reset + Font */
+* {
   font-family: "Manrope", sans-serif;
   font-weight: 500;
-  -webkit-tap-highlight-color: transparent;
-  background-color: theme('colors.iosBg');
-  transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-.dark body {
-  background-color: theme('colors.iosDark');
-}
-
-/* smooth transitions globally */
-* {
   transition: all 0.25s ease-out;
 }
 
-/* Remove cursed cursor override 😂 */
+/* Default Body Theme */
 body {
-  cursor: auto !important;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+  cursor: none !important; /* hide real cursor */
 }
 
-@keyframes slideUp {
-  from { transform: translateY(100%); }
-  to { transform: translateY(0%); }
+/* Root Theme Background (light mode) controlled via App.jsx */
+.bg-bubbles {
+  min-height: 100vh;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+  background: radial-gradient(circle at center, #e7e9ff 0%, #eef0ff 40%, #ffffff 100%);
+  background-size: 200% 200%;
+  animation: floatBg 12s ease-in-out infinite alternate;
+  color: #121212;
 }
 
-.animate-slideUp {
-  animation: slideUp 0.35s cubic-bezier(0.25, 0.8, 0.25, 1);
+/* Dark Mode Root Background */
+.dark .bg-bubbles {
+  background: radial-gradient(circle at center, #1d1f35 0%, #12131c 50%, #0a0b10 100%);
+  color: #fafafa;
 }
 
-body {
-  background: linear-gradient(135deg, #f5f7fa, #ebedf0);
-  transition: background .3s ease;
+/* Background Nebula Glow Bubbles Layer */
+.bg-bubbles::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    radial-gradient(circle at 20% 30%, rgba(150, 180, 255, 0.28), transparent 45%),
+    radial-gradient(circle at 80% 20%, rgba(120, 140, 255, 0.25), transparent 45%),
+    radial-gradient(circle at 60% 80%, rgba(160, 180, 255, 0.24), transparent 45%),
+    radial-gradient(circle at 30% 70%, rgba(120, 150, 255, 0.22), transparent 45%);
+  background-size: 500px 500px;
+  filter: blur(40px);
+  z-index: -1;
+  will-change: transform;
+  transform: translate(calc(var(--mx, 0px) * 1), calc(var(--my, 0px) * 1));
+  transition: transform 0.2s ease-out;
 }
 
-.dark body {
-  background: linear-gradient(135deg, #0e0e0f, #0c0c0e);
+/* Dark Mode Glow */
+.dark .bg-bubbles::before {
+  background-image:
+    radial-gradient(circle at 20% 30%, rgba(90, 110, 180, 0.27), transparent 45%),
+    radial-gradient(circle at 80% 20%, rgba(70, 90, 180, 0.25), transparent 45%),
+    radial-gradient(circle at 60% 80%, rgba(100, 120, 200, 0.23), transparent 45%),
+    radial-gradient(circle at 30% 70%, rgba(70, 90, 180, 0.22), transparent 45%);
 }
 
-* {
+/* Micro Particles Layer */
+.bg-bubbles::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    radial-gradient(circle, rgba(255,255,255,0.55) 1px, transparent 1px),
+    radial-gradient(circle, rgba(255,255,255,0.25) 1px, transparent 1px);
+  background-size: 140px 140px, 200px 200px;
+  background-position: 0 0, 60px 80px;
+  opacity: 0.3;
+  animation: particlesFloat 22s linear infinite;
+}
+
+/* Dark particles */
+.dark .bg-bubbles::after {
+  opacity: 0.18;
+}
+
+/* Cursor Hide For Elements */
+button, a, input, textarea, select {
   cursor: none !important;
+}
+
+/* Animations */
+@keyframes floatBg {
+  0% { background-position: 50% 50%; }
+  100% { background-position: 55% 45%; }
+}
+
+@keyframes particlesFloat {
+  from { transform: translateY(0); }
+  to { transform: translateY(-80px); }
 }
