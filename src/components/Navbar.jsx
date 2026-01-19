@@ -3,7 +3,7 @@ import assets from '../assets/assets';
 import { FaArrowRightLong } from "react-icons/fa6";
 import { CiLight, CiDark } from 'react-icons/ci';
 import useThemeStore from '../store/ThemeStore';
-import Menu from './menu';
+import Menu from "./Menu.jsx";
 
 const Navbar = () => {
     const { isDark, toggleTheme } = useThemeStore();
